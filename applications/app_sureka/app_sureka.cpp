@@ -71,7 +71,7 @@ int main(int argc, char** args) {
 
       // attach the boundary condition function and generate boundary data
       mlSol.AttachSetBoundaryConditionFunction(SetBoundaryCondition);
-      mlSol.GenerateBdc("u");
+      mlSol.GenerateBdc("U");
 
       // define the multilevel problem attach the mlSol object to it
       MultiLevelProblem mlProb(&mlSol);
@@ -80,7 +80,7 @@ int main(int argc, char** args) {
       LinearImplicitSystem& system = mlProb.add_system < LinearImplicitSystem > ("Poisson");
 
       // add solution "u" to system
-      system.AddSolutionToSystemPDE("u");
+      system.AddSolutionToSystemPDE("U");
 
       // attach the assembling function to system
       system.SetAssembleFunction(AssemblePoissonProblem);
@@ -139,11 +139,11 @@ void AssemblePoissonProblem(MultiLevelProblem& ml_prob) {
 
   //solution variable
   unsigned soluIndex;
-  soluIndex = mlSol->GetIndex("u");    // get the position of "u" in the ml_sol object
+  soluIndex = mlSol->GetIndex("U");    // get the position of "u" in the ml_sol object
   unsigned soluType = mlSol->GetSolutionType(soluIndex);    // get the finite element type for "u"
 
   unsigned soluPdeIndex;
-  soluPdeIndex = mlPdeSys->GetSolPdeIndex("u");    // get the position of "u" in the pdeSys object
+  soluPdeIndex = mlPdeSys->GetSolPdeIndex("U");    // get the position of "u" in the pdeSys object
 
   vector < double >  solu; // local solution
   solu.reserve(maxSize);
