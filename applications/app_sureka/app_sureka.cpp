@@ -23,9 +23,9 @@ using namespace femus;
 bool SetBoundaryCondition(const std::vector < double >& x, const char solName[], double& value, const int faceName, const double time) {
   bool dirichlet = true; //dirichlet
   value = 0;
-
+/*
   if (faceName == 2)
-    dirichlet = false;
+    dirichlet = false;*/
 
   return dirichlet;
 }
@@ -41,6 +41,8 @@ double GetExactSolutionLaplace(const std::vector < double >& x) {
   return -pi * pi * cos(pi * x[0]) * cos(pi * x[1]) - pi * pi * cos(pi * x[0]) * cos(pi * x[1]);
 };
 
+
+
 int main(int argc, char** args) {
 
   // init Petsc-MPI communicator
@@ -50,10 +52,16 @@ int main(int argc, char** args) {
   MultiLevelMesh mlMsh;
   double scalingFactor = 1.;
   // read coarse level mesh and generate finers level meshes
-  mlMsh.ReadCoarseMesh("./input/square.neu", "seventh", scalingFactor);
+//   mlMsh.ReadCoarseMesh("./input/square.neu", "seventh", scalingFactor);
   /* "seventh" is the order of accuracy that is used in the gauss integration scheme
       probably in the furure it is not going to be an argument of this function   */
-  unsigned numberOfUniformLevels = 3;
+//  const unsigned int nx, const unsigned int ny,const unsigned int nz,onst double xmin, const double xmax,st double ymin, const double ymax,onst double zmin, const double zmax, const ElemType type,
+//                                const char GaussOrder[]
+
+
+  mlMsh.GenerateCoarseBoxMesh( 8,8,0,-0.5,0.5,-0.5,0.5,0.,0.,QUAD9,"seventh");
+  
+  unsigned numberOfUniformLevels = 1;
   unsigned numberOfSelectiveLevels = 0;
   mlMsh.RefineMesh(numberOfUniformLevels , numberOfUniformLevels + numberOfSelectiveLevels, NULL);
   mlMsh.PrintInfo();
@@ -155,7 +163,7 @@ void AssemblePoissonProblem(MultiLevelProblem& ml_prob) {
     x[i].reserve(maxSize);
   }
 
-  vector <double> phi;  // local test function
+    vector <double> phi;  // local test function
   vector <double> phi_x; // local test function first order partial derivatives
   vector <double> phi_xx; // local test function second order partial derivatives
   double weight; // gauss point weight
