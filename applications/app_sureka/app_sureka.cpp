@@ -59,7 +59,7 @@ int main(int argc, char** args) {
 //                                const char GaussOrder[]
 
 
-  mlMsh.GenerateCoarseBoxMesh( 8,8,0,-0.5,0.5,-0.5,0.5,0.,0.,QUAD9,"seventh");
+  mlMsh.GenerateCoarseBoxMesh( 2,2,0,-0.5,0.5,-0.5,0.5,0.,0.,QUAD9,"seventh");
   
   unsigned numberOfUniformLevels = 1;
   unsigned numberOfSelectiveLevels = 0;
@@ -182,7 +182,11 @@ void AssemblePoissonProblem(MultiLevelProblem& ml_prob) {
 
   if (assembleMatrix)
     KK->zero(); // Set to zero all the entries of the Global Matrix
-
+    
+    
+  int counter = 0;
+  
+  
   // element loop: each process loops only on the elements that owns
   for (int iel = msh->IS_Mts2Gmt_elem_offset[iproc]; iel < msh->IS_Mts2Gmt_elem_offset[iproc + 1]; iel++) {
 
@@ -260,9 +264,13 @@ void AssemblePoissonProblem(MultiLevelProblem& ml_prob) {
             // *** phi_j loop ***
             for (unsigned j = 0; j < nDofu; j++) {
               laplace = 0.;
-
+	      counter++;
+	      
+	      
               for (unsigned kdim = 0; kdim < dim; kdim++) {
                 laplace += (phi_x[i * dim + kdim] * phi_x[j * dim + kdim]) * weight;
+		
+
               }
 
               Jac[i * nDofu + j] += laplace;
@@ -272,7 +280,10 @@ void AssemblePoissonProblem(MultiLevelProblem& ml_prob) {
         } // end phi_i loop
       } // end gauss point loop
     } // endif single element not refined or fine grid loop
-
+    
+      
+    
+    
     //--------------------------------------------------------------------------------------------------------
     // Add the local Matrix/Vector into the global Matrix/Vector
 
@@ -284,6 +295,9 @@ void AssemblePoissonProblem(MultiLevelProblem& ml_prob) {
       KK->add_matrix_blocked(Jac, l2GMap, l2GMap);
     }
   } //end element loop for each process
+  
+  
+  std::cout << "counter value ................  " << counter << std::endl;
 
   RES->close();
 
