@@ -63,10 +63,16 @@ int main(int argc, char** args) {
   MultiLevelMesh mlMsh;
   // read coarse level mesh and generate finers level meshes
   double scalingFactor = 1.;
-  mlMsh.ReadCoarseMesh("./input/cube_hex.neu", "seventh", scalingFactor);
-  //mlMsh.ReadCoarseMesh ( "./input/square_quad.neu", "seventh", scalingFactor );
+ 
+  
+  
+  //mlMsh.ReadCoarseMesh("./input/cube_hex.neu", "seventh", scalingFactor);
+  mlMsh.ReadCoarseMesh ( "./input/square_quad.neu", "seventh", scalingFactor );
   /* "seventh" is the order of accuracy that is used in the gauss integration scheme
      probably in the furure it is not going to be an argument of this function   */
+ 
+  
+  
   unsigned dim = mlMsh.GetDimension();
 
   unsigned numberOfUniformLevels = 3;
@@ -82,9 +88,15 @@ int main(int argc, char** args) {
   MultiLevelSolution mlSol(&mlMsh);
 
   // add variables to mlSol
-  mlSol.AddSolution("U", LAGRANGE, SECOND);
-  mlSol.AddSolution("V", LAGRANGE, SECOND);
+  mlSol.AddSolution("U", LAGRANGE, FIRST);
+  mlSol.AddSolution("V", LAGRANGE, FIRST);
 
+   
+  
+  //mlSol.AddSolution("U", LAGRANGE, SECOND);
+  //mlSol.AddSolution("V", LAGRANGE, SECOND);
+
+  
   if (dim == 3) mlSol.AddSolution("W", LAGRANGE, SECOND);
 
   mlSol.AddSolution("P", LAGRANGE, FIRST);
@@ -164,7 +176,7 @@ void AssembleBoussinesqAppoximation_AD(MultiLevelProblem& ml_prob) {
   solVIndex[0] = mlSol->GetIndex("U");    // get the position of "U" in the ml_sol object
   solVIndex[1] = mlSol->GetIndex("V");    // get the position of "V" in the ml_sol object
 
-  if (dim == 3) solVIndex[2] = mlSol->GetIndex("W");      // get the position of "V" in the ml_sol object
+  if (dim == 3) solVIndex[2] = mlSol->GetIndex("W");      // get the position of "W" in the ml_sol object
 
   unsigned solVType = mlSol->GetSolutionType(solVIndex[0]);    // get the finite element type for "u"
 
