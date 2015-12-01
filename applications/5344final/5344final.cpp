@@ -26,23 +26,42 @@ using namespace femus;
 bool SetBoundaryCondition(const std::vector < double >& x, const char SolName[], double& value, const int facename, const double time) {
   bool dirichlet = true; //dirichlet
 
+  //=====================
   if (!strcmp(SolName, "U")) {
     value = 0.;
-  } else if (!strcmp(SolName, "V")) {
+    
+    if (facename == 1 || facename == 3) {
+      dirichlet = false;
+    }
+  
+  }
+  
+  
+  //=====================
+  else if (!strcmp(SolName, "V")) {
     value = 0.;
 
-    if (facename == 1) {
-      if (x[1] < 0.5 && x[1] > -0.5 && x[2] < 0.5 && x[2] > -0.5) value = 1.;
-    }
+//     if (facename == 1) {
+//       dirichlet = false;
+//       if (x[1] < 0.5 && x[1] > -0.5 && x[2] < 0.5 && x[2] > -0.5) value = 1.;
+//     }
   }
 
-  if (!strcmp(SolName, "W")) {
-    value = 0.;
-  } else if (!strcmp(SolName, "P")) {
-    value = 0.;
-    dirichlet = false;
-
-    if (x[0] < -0.5 + 1.0e-10 && x[1] < -0.5 + 1.0e-10 && x[2] < 1.0e-10 && x[2] > -1.0e-10) dirichlet = true;
+ 
+  //=====================
+  else if (!strcmp(SolName, "P")) {
+   dirichlet = false;
+   
+    if (facename == 1) {
+      dirichlet = true;
+      value = 1.;
+    }
+    else if (facename == 3) {
+      dirichlet = true;
+      value = 0.;
+    }
+    
+    
   }
 
   return dirichlet;
@@ -75,12 +94,12 @@ int main(int argc, char** args) {
   
   unsigned dim = mlMsh.GetDimension();
 
-  unsigned numberOfUniformLevels = 3;
+  unsigned numberOfUniformLevels = 1;
   unsigned numberOfSelectiveLevels = 0;
   mlMsh.RefineMesh(numberOfUniformLevels , numberOfUniformLevels + numberOfSelectiveLevels, NULL);
 
   // erase all the coarse mesh levels
-  mlMsh.EraseCoarseLevels(numberOfUniformLevels - 1);
+//   mlMsh.EraseCoarseLevels(numberOfUniformLevels - 1);
 
   // print mesh info
   mlMsh.PrintInfo();
@@ -88,8 +107,8 @@ int main(int argc, char** args) {
   MultiLevelSolution mlSol(&mlMsh);
 
   // add variables to mlSol
-  mlSol.AddSolution("U", LAGRANGE, FIRST);
-  mlSol.AddSolution("V", LAGRANGE, FIRST);
+  mlSol.AddSolution("U", LAGRANGE, SECOND);
+  mlSol.AddSolution("V", LAGRANGE, SECOND);
 
    
   
