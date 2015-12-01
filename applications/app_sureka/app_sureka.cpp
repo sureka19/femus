@@ -23,16 +23,20 @@ using namespace femus;
 
 bool SetBoundaryCondition(const std::vector < double >& x, const char solName[], double& value, const int faceName, const double time) {
   bool dirichlet = true; //dirichlet
-  value = 0;
+  value = 7.*x[0];
 
 //   if (faceName == 1)
 //     dirichlet = false;
 
   return dirichlet;
 }
+// double InitalValueU(const std::vector < double >& x) {
+//   return x[0] + x[1];
+// }
 
-double InitalValueU(const std::vector < double >& x) {
-  return x[0] + x[1];
+
+double InitialValueU(const std::vector < double >& x) {
+  return 7.*x[0];                           //boundary condition should be same as initialvalue
 }
 
 void AssemblePoissonProblem(MultiLevelProblem& ml_prob);
@@ -69,7 +73,7 @@ int main(int argc, char** args) {
 //                                const char GaussOrder[]
 
 
-  mlMsh.GenerateCoarseBoxMesh( 2,2,0,-0.5,0.5,-0.5,0.5,0.,0.,QUAD9,"seventh");
+  mlMsh.GenerateCoarseBoxMesh( 32,32,0,-0.5,0.5,-0.5,0.5,0.,0.,QUAD9,"seventh");
   
   unsigned numberOfUniformLevels = 1;
   unsigned numberOfSelectiveLevels = 0;
@@ -83,7 +87,9 @@ int main(int argc, char** args) {
   mlSol.AddSolution("U", LAGRANGE, SECOND);
   
 
-  mlSol.Initialize("All");    // initialize all varaibles to zero
+  mlSol.Initialize("U",InitialValueU);    
+  // initialize all varaibles to one or any initial value with  "U",InitialValueU
+  // initialize all varaibles to zero with "All"
   
  
 
