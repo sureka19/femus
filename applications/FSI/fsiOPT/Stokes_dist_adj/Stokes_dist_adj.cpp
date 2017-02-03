@@ -630,19 +630,23 @@ void AssembleNavierStokesOpt_AD(MultiLevelProblem& ml_prob) {
 	  
       for (unsigned  kdim = 0; kdim < dim; kdim++) {
         s.dependent(&aResV[kdim][0], nDofsV);
-	 s.dependent(&aResVadj[kdim][0], nDofsVadj);
       }
-
       s.dependent(&aResP[0], nDofsP);
+      
+      for (unsigned  kdim = 0; kdim < dim; kdim++) {
+	 s.dependent(&aResVadj[kdim][0], nDofsVadj);
+        }
       s.dependent(&aResPadj[0], nDofsPadj);
 
       // define the independent variables
       for (unsigned  kdim = 0; kdim < dim; kdim++) {
         s.independent(&solV[kdim][0], nDofsV);
-	s.independent(&solVadj[kdim][0], nDofsVadj);
       }
 
       s.independent(&solP[0], nDofsP);
+      for (unsigned  kdim = 0; kdim < dim; kdim++) {
+	s.independent(&solVadj[kdim][0], nDofsVadj);
+      }
       s.independent(&solPadj[0], nDofsPadj);
 
       // get the and store jacobian matrix (row-major)
