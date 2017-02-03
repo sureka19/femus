@@ -48,6 +48,9 @@ IF(BUILD_FSIAPPS)
   # FSI SteadyState in porous media //NS - StAdCtrl
   ADD_SUBDIRECTORY(${FSI_FOLDER}/fsiOPT/testOPT)
   
+  # FSI SteadyState in porous media //Stokes - Distributed Control Opt _StAd
+  ADD_SUBDIRECTORY(${FSI_FOLDER}/fsiOPT/Stokes_dist_adj)
+  
   # FSI SteadyState in porous media //NS - Opt _lift
   ADD_SUBDIRECTORY(${FSI_FOLDER}/fsiOPT/testNS_lift)
   
