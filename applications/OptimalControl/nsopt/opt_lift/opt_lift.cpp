@@ -26,13 +26,13 @@
 
 
 #define FACE_FOR_CONTROL  1
-
+#define DOM_DIM 2
 
 #include   "../nsopt_params.hpp"
 
 #define exact_sol_flag 0 // 1 = if we want to use manufactured solution; 0 = if we use regular convention
 #define compute_conv_flag 0 // 1 = if we want to compute the convergence and error ; 0 =  no error computation
-#define no_of_ref 2     //mesh refinements
+#define no_of_ref 3    //mesh refinements
 
 #define NO_OF_L2_NORMS 11   //U,V,P,UADJ,VADJ,PADJ,UCTRL,VCTRL,PCTRL,U+U0,V+V0
 #define NO_OF_H1_NORMS 8    //U,V,UADJ,VADJ,UCTRL,VCTRL,U+U0,V+V0
@@ -57,8 +57,7 @@ bool SetBoundaryConditionOpt(const std::vector < double >& x, const char SolName
        if (!strcmp(SolName, "UCTRL"))    { dirichlet = false; }
   else if (!strcmp(SolName, "VCTRL"))    { dirichlet = false; } 
   else if (!strcmp(SolName, "WCTRL"))    { dirichlet = false; } 
-	
-      }   
+    }
 #endif
 
 #if exact_sol_flag == 1
@@ -72,6 +71,12 @@ bool SetBoundaryConditionOpt(const std::vector < double >& x, const char SolName
       }
 #endif
 
+    if ((x[0] < 0. + 1.e-5 && x[1] < 0. + 1.e-5) /*&& x[2] < 0. + 1.e-5 */)
+    {
+       if (!strcmp(SolName, "P"))        { dirichlet = false; value = 0.; }
+  else if (!strcmp(SolName, "PADJ"))     { dirichlet = false; value = 0.; }
+  else if (!strcmp(SolName, "PCTRL"))    { dirichlet = false; value = 0.; }
+    }
 
 //    //Poiseuille problem---------------------------------------------------------------
 // // LEFT ==========================  
@@ -156,8 +161,12 @@ int main(int argc, char** args) {
  
     std::string mesh_folder_file = "input/";
 //   std::string input_file = "square_parametric.med";
-//   std::string input_file = "square_4x5.med";
+#if DOM_DIM == 2  
+    std::string input_file = "square_4x5.med";
+#endif
+#if DOM_DIM == 3  
     std::string input_file = "Mesh_3_groups.med";
+#endif
 //   std::string input_file = "cyl.med"; // "fifth"
   std::ostringstream mystream; mystream << "./" << /*DEFAULT_INPUTDIR*/ mesh_folder_file << input_file;
   const std::string infile = mystream.str();

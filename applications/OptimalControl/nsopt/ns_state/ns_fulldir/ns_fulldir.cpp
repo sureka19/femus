@@ -12,6 +12,7 @@
 #include "Files.hpp"
 
 #define FACE_FOR_CONTROL  1
+#define DOM_DIM 2
 
 
 #include   "../../nsopt_params.hpp"

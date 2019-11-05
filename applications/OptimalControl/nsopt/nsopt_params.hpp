@@ -32,7 +32,7 @@
  
 //******************************** switch between stokes and navier stokes *********************************************
  
- int advection_flag = 1;
+ int advection_flag = 0;
  int advection_Picard = 0;
  
 //  Newton: advection_flag = 1; advection_Picard = 0;
@@ -108,13 +108,23 @@ int ElementTargetFlag(const std::vector<double> & elem_center) {
   const double extreme_pos = extreme_position(FACE_FOR_CONTROL);
    
   const unsigned int axis_dir = axis_direction_Gamma_control(FACE_FOR_CONTROL);
+//     if ( sqrt(elem_center[0] * elem_center[0] + elem_center[1] * elem_center[1]) < 0.5 + 1.e-5  &&
+// 	  elem_center[2] > 0.75 - 1.e-5  &&  elem_center[2] < 1.0  + 1.e-5
+//   ) //target for cylinder
+//     target_flag = 1;
  
   if (   ( target_line_sign * elem_center[1 - axis_dir] <   target_line_sign * ( extreme_pos + target_line_sign * target_region_width + target_line_sign * offset_to_include_line ) )
       && ( target_line_sign * elem_center[1 - axis_dir] > - 0.5 + target_line_sign * (0.5 - target_line_sign * offset_to_include_line))
       && ( elem_center[axis_dir] > GAMMA_CONTROL_LOWER - offset_to_include_line ) 
       && ( elem_center[axis_dir] < GAMMA_CONTROL_UPPER + offset_to_include_line ) 
-     )
-   {  target_flag = 1;  }
+     ) {
+      if ( DOM_DIM == 3 ) {
+          if (   ( elem_center[1 + axis_dir] > GAMMA_CONTROL_LOWER - offset_to_include_line ) 
+              && ( elem_center[1 + axis_dir] < GAMMA_CONTROL_UPPER + offset_to_include_line ) 
+          ) target_flag = 1; 
+        }  
+    else {  target_flag = 1;  }
+  }
   
      return target_flag;
 
@@ -190,6 +200,7 @@ int ControlDomainFlag_bdry(const std::vector<double> & elem_center) {
 
    const double target_line = 0.5 + target_line_sign * offset_to_include_line; 
 
+//    if ( elem_center[2] >  1. - mesh_size ) { control_el_flag = 1; }
   
      if (     (  target_line_sign * elem_center[axis_dir] < target_line_sign * target_line ) 
            && (  target_line_sign * elem_center[axis_dir] > - 0.5 + target_line_sign * (0.5 - target_line_sign * offset_to_include_line)))

@@ -22,6 +22,8 @@
 //*********************** Sets Number of subdivisions in X and Y direction *****************************************
 
 #define FACE_FOR_CONTROL  1
+#define DOM_DIM 2
+
 #include   "../nsopt_params.hpp"
 
 
@@ -29,7 +31,7 @@
 
 #define exact_sol_flag 0 // 1 = if we want to use manufactured solution; 0 = if we use regular convention
 #define compute_conv_flag 0 // 1 = if we want to compute the convergence and error ; 0 =  no error computation
-#define no_of_ref 2     //mesh refinements
+#define no_of_ref 3     //mesh refinements
 
 #define NO_OF_L2_NORMS 9   //U,V,P,UADJ,VADJ,PADJ,GX,GY,THETA
 #define NO_OF_H1_NORMS 6    //U,V,UADJ,VADJ,GX, GY
@@ -67,7 +69,13 @@ bool SetBoundaryConditionOpt(const std::vector < double >& x, const char SolName
                 if (!strcmp(SolName, "V"))       { if (facename == FACE_FOR_CONTROL) value = - sin(2. * pi * x[0]) * sin(pi* x[1]) + pi * x[1] * sin(2. * pi * x[0]); }
  #endif
                
-  return dirichlet;
+    if ((x[0] < 0. + 1.e-5 && x[1] < 0. + 1.e-5) /*&& x[2] < 0. + 1.e-5 */)
+    {
+       if (!strcmp(SolName, "P"))        { dirichlet = false; value = 0.; }
+  else if (!strcmp(SolName, "PADJ"))     { dirichlet = false; value = 0.; }
+    }
+
+    return dirichlet;
 
 }
 
@@ -143,8 +151,13 @@ int main(int argc, char** args) {
 // *************************
 	
 //   std::string input_file = "square_parametric.med";
-//   std::string input_file = "square_4x5.med";
+#if DOM_DIM == 2  
+  std::string input_file = "square_4x5.med";
+#endif
+#if DOM_DIM == 3  
   std::string input_file = "Mesh_3_groups.med";
+#endif
+//   std::string input_file = "cyl.med"; // "fifth"
   std::ostringstream mystream; mystream << "./" << DEFAULT_INPUTDIR << "/" << input_file;
   const std::string infile = mystream.str();
   
